@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Causas Delay — Delay Generator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #ebebeb;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    .topnav {
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex; align-items: center;
+      padding: 0 32px; height: 48px;
+    }
+    .logo-area { display: flex; align-items: center; gap: 12px; margin-right: 32px; }
+    .logo-circle {
+      width: 34px; height: 34px; background: #ffe600; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 12px; color: #1a1f71;
+    }
+    .logo-title { font-size: 0.82rem; font-weight: 700; color: #1a1f71; line-height: 1.1; }
+    .logo-sub {
+      font-size: 0.6rem; color: #ffe600; font-weight: 700;
+      letter-spacing: 1px; background: #1a1f71; padding: 1px 5px; border-radius: 2px;
+    }
+    .nav-tab {
+      padding: 0 18px; height: 48px; display: flex; align-items: center;
+      font-size: 0.82rem; font-weight: 600; color: #3483fa;
+      border-bottom: 3px solid #3483fa;
+    }
+    .nav-live {
+      margin-left: auto; background: #00a650; color: #fff;
+      font-size: 0.65rem; font-weight: 700; padding: 3px 8px;
+      border-radius: 3px; letter-spacing: 1px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #1a1f71 0%, #0d1147 60%, #12154e 100%);
+      padding: 32px 40px 40px; color: #fff;
+    }
+    .hero-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; color: #ffe600; margin-bottom: 8px; }
+    .hero-title   { font-size: 1.9rem; font-weight: 900; line-height: 1; margin-bottom: 8px; }
+    .hero-title span { color: #ffe600; }
+    .hero-desc  { font-size: 0.82rem; color: #a8b4d8; line-height: 1.6; max-width: 580px; }
+    .hero-hint {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 6px; padding: 8px 14px; font-size: 0.74rem; color: #c8d4f0;
+    }
+
+    /* ── DIAGRAM ── */
+    .diagram-wrap { padding: 28px 32px 56px; max-width: 780px; margin: 0 auto; }
+
+    /* ── OWNER BLOCK ── */
+    .owner-block { margin-bottom: 10px; }
+
+    .owner-node {
+      display: flex; align-items: center; gap: 12px;
+      background: #fff; border: 2px solid #e0e6f0; border-left: 4px solid;
+      border-radius: 8px; padding: 12px 16px;
+      cursor: pointer; user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,.07);
+      transition: box-shadow .2s;
+    }
+    .owner-node:hover { box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+    .owner-avatar {
+      width: 36px; height: 36px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 0.75rem; color: #fff; flex-shrink: 0;
+    }
+    .owner-info { flex: 1; }
+    .owner-name  { font-weight: 700; font-size: 0.95rem; color: #1a1f71; }
+    .owner-count { font-size: 0.7rem; color: #999; margin-top: 1px; }
+    .owner-chevron {
+      font-size: 0.75rem; color: #999; transition: transform .2s; flex-shrink: 0;
+    }
+    .owner-node.open .owner-chevron { transform: rotate(90deg); }
+
+    /* ── CAUSES TREE ── */
+    .causes-tree {
+      display: none;
+      padding-left: 20px;
+      border-left: 2px dashed #d0d8e8;
+      margin-left: 18px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+    .causes-tree.open { display: block; }
+
+    /* ── CAUSE ROW ── */
+    .cause-wrap { position: relative; padding: 3px 0; }
+
+    /* horizontal tick to cause */
+    .cause-wrap::before {
+      content: '';
+      position: absolute;
+      left: -20px; top: 18px;
+      width: 20px; height: 2px;
+      background: #d0d8e8;
+    }
+
+    .cause-node {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: #fff; border: 1px solid #e4e8f0; border-left: 3px solid;
+      border-radius: 6px; padding: 9px 12px;
+      cursor: pointer; user-select: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+      transition: box-shadow .15s;
+    }
+    .cause-node:hover { box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .cause-node.open  { border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; }
+
+    .cause-label {
+      flex: 1; font-size: 0.8rem; font-weight: 700;
+      color: #1a1f71; font-family: 'Courier New', monospace; word-break: break-word;
+    }
+    .cause-chevron { font-size: 0.7rem; color: #bbb; transition: transform .2s; flex-shrink: 0; margin-top: 1px; }
+    .cause-node.open .cause-chevron { transform: rotate(90deg); }
+
+    /* ── BRANCHES (Descripción + Lógica) ── */
+    .branches-wrap {
+      display: none;
+      padding-left: 18px;
+      border-left: 2px dashed #e4e8f0;
+      margin-left: 12px;
+    }
+    .branches-wrap.open { display: block; }
+
+    .branch-item { position: relative; padding: 3px 0; }
+
+    .branch-item::before {
+      content: '';
+      position: absolute;
+      left: -18px; top: 16px;
+      width: 18px; height: 2px;
+      background: #e4e8f0;
+    }
+
+    .branch-node {
+      display: flex; align-items: center; gap: 7px;
+      background: #f8f9ff; border: 1px solid #e4e8f0; border-radius: 5px;
+      padding: 7px 11px; cursor: pointer; user-select: none;
+      transition: background .15s;
+    }
+    .branch-node:hover { background: #eef1fb; }
+
+    .branch-icon { font-size: 0.82rem; flex-shrink: 0; }
+    .branch-label { font-size: 0.77rem; font-weight: 600; color: #334; flex: 1; }
+    .branch-chevron { font-size: 0.65rem; color: #bbb; transition: transform .2s; }
+    .branch-node.open .branch-chevron { transform: rotate(90deg); }
+
+    .branch-content {
+      display: none;
+      background: #f0f3ff;
+      border: 1px solid #dde3f5;
+      border-top: none;
+      border-radius: 0 0 5px 5px;
+      padding: 8px 11px;
+      font-size: 0.74rem; color: #444; line-height: 1.5;
+    }
+    .branch-content.open { display: block; }
+    .branch-content.empty { color: #aaa; font-style: italic; }
+
+    /* logic content gets orange tint */
+    .branch-item.logic .branch-content {
+      background: #fff8f0;
+      border-color: #fde4c0;
+      color: #7a4400;
+    }
+    .branch-item.logic .branch-node {
+      background: #fff8f0;
+      border-color: #fde4c0;
+    }
+    .branch-item.logic .branch-node:hover { background: #fef0dc; }
+    .branch-item.logic .branch-label { color: #7a4400; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="logo-area">
+    <div class="logo-circle">ML</div>
+    <div>
+      <div class="logo-title">Delay Generator</div>
+      <div class="logo-sub">INTELLIGENCE — EXPERIENCE</div>
+    </div>
+  </div>
+  <div class="nav-tab">Causas Delay</div>
+  <div class="nav-live">LIVE</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">INTELLIGENCE — EXPERIENCE</div>
+  <div class="hero-title">Delay <span>Generator</span></div>
+  <div class="hero-desc">
+    Diagrama de causas raíz que generan delays en los envíos, organizado por owner operativo.
+  </div>
+  <div class="hero-hint">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffe600" stroke-width="2.5">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    Clic en <strong>Owner</strong> para ver causas · Clic en una <strong>Causa</strong> para desplegar <em>Descripción</em> y <em>Lógica</em>
+  </div>
+</div>
+
+<!-- DIAGRAM -->
+<div class="diagram-wrap" id="diagram"></div>
+
+<script>
+// =====================================================================
+//  DATA
+// =====================================================================
+const OWNERS = [
+  {
+    id: "AIR", name: "Air", color: "#7c3aed",
+    causes: [
+      { label: "AIR CANAL DIFERENTE",  desc: "",                                                                                                                         logic: "" },
+      { label: "AIR NO DATA TABLE",    desc: "Ausencia de información necesaria en las tablas de datos del sistema aéreo.",                                              logic: "" },
+      { label: "CAL NO DATA TABLE",    desc: "Falta de registros o información en las tablas de datos del comercial carrier (CAL), complicando la gestión o ruta de los envíos aéreos.", logic: "" },
+    ]
+  },
+  {
+    id: "CBT", name: "CBT", color: "#e11d48",
+    causes: [
+      { label: "CBT", desc: "El paquete es enviado desde un origen internacional p.e. China, USA, etc.", logic: "" },
+    ]
+  },
+  {
+    id: "FBM", name: "FBM", color: "#ea580c",
+    causes: [
+      { label: "CHANGE_FULFILLMENT",    desc: "",                                                                                    logic: "" },
+      { label: "fraudulent_shipment",   desc: "",                                                                                    logic: "" },
+      { label: "SLA DELAY",             desc: "",                                                                                    logic: "" },
+      { label: "troca_de_transportista",desc: "",                                                                                    logic: "" },
+      { label: "UFF",                   desc: "El paquete se envía desde otro FBM (fuera de lo planeado) - Unfulfillable.",          logic: "" },
+      { label: "wrong_logistic_center", desc: "El paquete se envía a un SVC equivocado.",                                           logic: "" },
+    ]
+  },
+  {
+    id: "FM", name: "FM", color: "#0284c7",
+    causes: [
+      { label: "CARRIER",                    desc: "",                                                                                                             logic: "" },
+      { label: "COLECTA PARCIAL",            desc: "",                                                                                                             logic: "" },
+      { label: "DIRECCION INCORRECTA",       desc: "Error en la dirección proporcionada, impidiendo la recolección o entrega adecuada.",                          logic: "" },
+      { label: "DISCREPANCIA ROUTE SELECTOR",desc: "",                                                                                                             logic: "" },
+      { label: "DRIVER",                     desc: "",                                                                                                             logic: "" },
+      { label: "FUERA DE RANGO",             desc: "Paquete localizado fuera del área de cobertura del transportista, impidiendo su recolección.",                logic: "" },
+      { label: "LATE ARRIVAL",              desc: "Llegada tarde del transportista al punto de entrega, afectando el horario planeado.",                          logic: "" },
+      { label: "LOCAL CERRADO",             desc: "Punto de entrega no accesible por cierre temporal o fuera de horario de atención.",                           logic: "" },
+      { label: "SIN PAQUETES",             desc: "",                                                                                                              logic: "" },
+      { label: "ZONA INACCESIBLE",         desc: "Área donde las condiciones impiden el acceso del transportista para recoger paquetes.",                        logic: "" },
+    ]
+  },
+  {
+    id: "LH", name: "LH", color: "#b45309",
+    causes: [
+      { label: "Cambio en el plan de ruta",  desc: "",                                                                                                                            logic: "" },
+      { label: "Control de patios",          desc: "",                                                                                                                            logic: "" },
+      { label: "Demora del ferry",           desc: "Retraso en la llegada o salida de un ferry utilizado para el transporte de mercancías.",                                     logic: "" },
+      { label: "Demora en la carga",         desc: "Retraso en el proceso de carga de mercancías en el vehículo de transporte.",                                                 logic: "" },
+      { label: "Desvío de ruta",             desc: "Cambio no planificado de la ruta debido a obstáculos o situaciones imprevistas.",                                            logic: "" },
+      { label: "GPS desconectado",           desc: "",                                                                                                                            logic: "" },
+      { label: "LATE ARRIVAL",              desc: "Llegada tarde del transportista al punto de entrega, afectando el horario planeado.",                                         logic: "" },
+      { label: "LATE ARRIVAL SVC",          desc: "Llegada tarde del transportista al SVC, afectando el horario planeado.",                                                      logic: "" },
+      { label: "LATE HYB INDUCTED",         desc: "",                                                                                                                            logic: "" },
+      { label: "Llantas pinchadas",          desc: "Problemas con neumáticos desinflados o dañados, dificultando el avance del transporte.",                                     logic: "" },
+      { label: "Manifestantes",              desc: "Interrupción del tránsito debido a protestas o manifestaciones en la ruta planeada.",                                        logic: "" },
+      { label: "MLP llegó tarde",            desc: "",                                                                                                                            logic: "" },
+      { label: "NO DATA TABLE",             desc: "Falta de información en las tablas de datos requeridas.",                                                                     logic: "" },
+      { label: "Parada no autorizada",       desc: "Detención del vehículo en un lugar no previsto o permitido, generando demoras en la logística.",                             logic: "" },
+      { label: "Problema con el operador",   desc: "Incidente o inconveniente relacionado con el operador del vehículo que afecta el tránsito programado.",                      logic: "" },
+      { label: "Problema de acceso",         desc: "Dificultad para acceder a ciertas áreas o puntos de entrega.",                                                               logic: "" },
+      { label: "Problema mecánico",          desc: "Fallo o avería en el vehículo que interrumpe el trayecto planeado.",                                                         logic: "" },
+      { label: "Restricción para circular",  desc: "Limitaciones impuestas para el tránsito de vehículos en ciertas áreas o tiempos, afectando la ruta.",                       logic: "" },
+      { label: "Revisión / Reten fiscal",    desc: "Inspección de las autoridades fiscales o aduaneras que retarda el movimiento del vehículo.",                                 logic: "" },
+      { label: "Revisión de autoridades",    desc: "Chequeo llevado a cabo por autoridades reguladoras que puede causar demoras en la entrega.",                                 logic: "" },
+      { label: "Tránsito intenso",           desc: "Congestión vehicular significativa que ralentiza el avance del transporte hacia su destino.",                                logic: "" },
+    ]
+  },
+  {
+    id: "LM", name: "Last Mile", color: "#3483fa",
+    causes: [
+      { label: "attempted_robbery",                              desc: "Intento de robo durante la entrega que puede haber causado un retraso o impedir la entrega.",                                                logic: "" },
+      { label: "bad_address",                                    desc: "Dirección incorrecta o inválida que impide la finalización con éxito de la entrega.",                                                       logic: "" },
+      { label: "blocked",                                        desc: "Representan envíos cuya entrega fue restringida o abortada por el sistema.",                                                                 logic: "" },
+      { label: "blocked_by_keyword",                             desc: "Representan envíos cuya entrega fue restringida o abortada por el sistema por fallo con la palabra clave.",                                 logic: "" },
+      { label: "business_closed",                                desc: "Negocio receptor cerrado al momento del intento de entrega, impidiendo dejar el paquete.",                                                  logic: "" },
+      { label: "buyer_absent",                                   desc: "Ausencia del comprador en el lugar de entrega.",                                                                                             logic: "" },
+      { label: "buyer_moved",                                    desc: "Cambios en la localización del comprador después del envío, resultando en una dirección incorrecta para la entrega.",                       logic: "" },
+      { label: "buyer_rejected",                                 desc: "Rechazo del paquete por parte del comprador al momento de la entrega.",                                                                     logic: "" },
+      { label: "CAPACITY ISSUE",                                 desc: "Causa en el que el SVC conteneriza a tiempo pero LM inició ruta tarde o al día siguiente.",                                                 logic: "" },
+      { label: "claimed",                                        desc: "Paquete que se encuentra bajo custodia de LM es retenido o reportado como \"reclamado\".",                                                  logic: "" },
+      { label: "damaged",                                        desc: "Paquete dañado en alguna etapa durante el proceso de entrega que impide su entrega en condiciones aceptables.",                             logic: "" },
+      { label: "DECONTAINERIZED ON ROUTE | bad_geolocated",      desc: "Paquetes mal geolocalizados.",                                                                                                              logic: "" },
+      { label: "DECONTAINERIZED ON ROUTE | damaged",             desc: "Descontenerizado por paquete dañado.",                                                                                                      logic: "" },
+      { label: "DECONTAINERIZED ON ROUTE | does_not_enter_the_vehicle", desc: "Descontenerizado por Cube out — no cabe en el vehículo.",                                                                            logic: "" },
+      { label: "DECONTAINERIZED ON ROUTE | out_of_zone",         desc: "Descontenerizado por dirección fuera de cobertura.",                                                                                        logic: "" },
+      { label: "inaccessible_address",                           desc: "Dirección de entrega que no puede ser alcanzada debido a barreras físicas o restricciones de acceso.",                                     logic: "" },
+      { label: "LATE ROUTE START",                               desc: "SVC conteneriza a tiempo pero LM inició ruta horas después.",                                                                               logic: "" },
+      { label: "missing",                                        desc: "Paquete que no se encuentra en el inventario cuando es necesario para la entrega, resultando en un envío perdido.",                         logic: "" },
+      { label: "missrouted",                                     desc: "Paquete que ha sido enviado por una ruta incorrecta, lo que causa demoras en su entrega.",                                                  logic: "" },
+      { label: "NO DATA TABLE",                                  desc: "",                                                                                                                                           logic: "" },
+      { label: "picked_up",                                      desc: "Indica una anomalía donde el paquete fue retirado, recolectado o interceptado antes de poder completar su recorrido natural.",              logic: "" },
+      { label: "RTS",                                            desc: "Asignado cuando el paquete regresa a la red sin un subestatus operativo claro que justifique la razón del delay del envío.",                logic: "" },
+      { label: "transferred",                                    desc: "Ocurre cuando el envío sufre un quiebre en su trazabilidad al ser transferido de custodia.",                                                logic: "" },
+      { label: "unvisited_address",                              desc: "Dirección no visitada. Sin mayor detalle para determinar otra causa de Delay.",                                                             logic: "" },
+    ]
+  },
+  {
+    id: "PLACES", name: "Places", color: "#059669",
+    causes: [
+      { label: "COLECTA PARCIAL", desc: "Colecta incompleta en la que solo se contó con una parte de los paquetes que estaban programados para ser recogidos en un lugar.",   logic: "" },
+      { label: "LOCAL CERRADO",   desc: "El paquete no se pudo colectar porque el place estaba cerrado.",                                                                      logic: "" },
+      { label: "PERDIDOS",        desc: "Paquetes que se reconocieron como perdidos en el place.",                                                                              logic: "" },
+      { label: "SIN PAQUETES",   desc: "Situación en la que no hay paquetes disponibles para recoger en el place.",                                                            logic: "" },
+    ]
+  },
+  {
+    id: "SELLER", name: "Seller", color: "#6d28d9",
+    causes: [
+      { label: "COLECTA PARCIAL", desc: "Situación en la que el seller solo tiene una parte de los paquetes listos para recoger.",                                                                         logic: "" },
+      { label: "LATE DISPATCH",   desc: "El seller realiza el envío de los paquetes más tarde de lo planeado, impactando el cronograma de recolección.",                                                   logic: "" },
+      { label: "LOCAL CERRADO",   desc: "El lugar designado por el seller para la colecta de los paquetes listos está cerrado en el momento programado para la recolección.",                              logic: "" },
+      { label: "MWH",             desc: "Seller MHW generó delay al no alinearse origen planeado con ejecutado.",                                                                                           logic: "" },
+      { label: "SIN CODIGO",      desc: "",                                                                                                                                                                 logic: "" },
+      { label: "SIN PAQUETES",   desc: "El seller no tiene paquetes listos para ser recogidos.",                                                                                                           logic: "" },
+    ]
+  },
+  {
+    id: "SVC", name: "Service Center", color: "#00a650",
+    causes: [
+      { label: "AUDIT SHIP NOT IN THE BAG",        desc: "Paquete auditado que no se encontró dentro de la bolsa de despacho.",                                                                                           logic: "" },
+      { label: "CHERRY",                           desc: "El paquete fue Cherry pick — se esperó a que llegara otro paquete con la misma dirección de entrega para rutearlos juntos.",                                    logic: "" },
+      { label: "DECONTAINERIZED BY AUDIT |",       desc: "Descontenerizado durante auditoría sin sub-causa registrada.",                                                                                                   logic: "" },
+      { label: "DECONTAINERIZED BY AUDIT | missing",desc: "Descontenerizado por auditoría — paquete faltante.",                                                                                                            logic: "" },
+      { label: "DECONTAINERIZED BY AUDIT | sorting",desc: "Descontenerizado por auditoría — error de sorteo.",                                                                                                             logic: "" },
+      { label: "HYBRIDO",                          desc: "Estación Híbrida — se le dio entrada por el Scan del XD y no por la de SVC.",                                                                                    logic: "" },
+      { label: "LATE DISPATCH",                    desc: "Se despacha fuera de su OOT correspondiente. (Causa raíz genérica)",                                                                                             logic: "" },
+      { label: "LATE HYB INDUCTED",                desc: "Fue inducido tarde en una estación Híbrida.",                                                                                                                    logic: "" },
+      { label: "NO RUTEADO",                       desc: "No se pudo rutear en el día/ciclo que se intentó rutear — ruteo fuera de horario establecido en el plan (blanco).",                                              logic: "" },
+      { label: "RTG SIDELINE",                     desc: "El Shp. fue parte de un sideline — se hizo a un lado y no se ruteó.",                                                                                            logic: "" },
+    ]
+  },
+  {
+    id: "XD", name: "XD", color: "#db2777",
+    causes: [
+      { label: "AIR TO GND",              desc: "Cambio del método de transporte de aéreo a terrestre.",                                                logic: "" },
+      { label: "FRAUDULENT_SHIPMENT",     desc: "",                                                                                                      logic: "" },
+      { label: "LABEL_REGENERATION",      desc: "Se tuvo complicaciones en la etiqueta por lo que se tuvo que crear nuevas etiquetas para el envío.",    logic: "" },
+      { label: "LATE DISPATCH",           desc: "Se despacha fuera de su OOT correspondiente.",                                                          logic: "" },
+      { label: "NEXT_STEP",               desc: "",                                                                                                      logic: "" },
+      { label: "PICKUP_ABSENT",           desc: "",                                                                                                      logic: "" },
+      { label: "SLA DEALY",               desc: "",                                                                                                      logic: "" },
+      { label: "TROCA_DE_TRANSPORTISTA",  desc: "",                                                                                                      logic: "" },
+      { label: "WRONG_LOGISTIC_CENTER",   desc: "El paquete se envía a un SVC equivocado.",                                                              logic: "" },
+    ]
+  },
+  {
+    id: "XPT", name: "XPT", color: "#64748b",
+    causes: [
+      { label: "LATE DISPATCH", desc: "", logic: "" },
+    ]
+  },
+];
+// =====================================================================
+
+function build() {
+  const diagram = document.getElementById('diagram');
+
+  OWNERS.forEach(owner => {
+    // owner block wrapper
+    const block = document.createElement('div');
+    block.className = 'owner-block';
+
+    // owner node
+    const ownerNode = document.createElement('div');
+    ownerNode.className = 'owner-node';
+    ownerNode.style.borderLeftColor = owner.color;
+    ownerNode.innerHTML = `
+      <div class="owner-avatar" style="background:${owner.color}">${owner.id}</div>
+      <div class="owner-info">
+        <div class="owner-name">${owner.name}</div>
+        <div class="owner-count">${owner.causes.length} causa${owner.causes.length !== 1 ? 's' : ''}</div>
+      </div>
+      <span class="owner-chevron">▶</span>
+    `;
+
+    // causes tree
+    const causesTree = document.createElement('div');
+    causesTree.className = 'causes-tree';
+
+    owner.causes.forEach(cause => {
+      const causeWrap = document.createElement('div');
+      causeWrap.className = 'cause-wrap';
+
+      // cause node
+      const causeNode = document.createElement('div');
+      causeNode.className = 'cause-node';
+      causeNode.style.borderLeftColor = owner.color + 'aa';
+      causeNode.innerHTML = `
+        <span class="cause-label">${cause.label}</span>
+        <span class="cause-chevron">▶</span>
+      `;
+
+      // branches (Descripción + Lógica)
+      const branchesWrap = document.createElement('div');
+      branchesWrap.className = 'branches-wrap';
+
+      // — Descripción branch
+      const descItem = document.createElement('div');
+      descItem.className = 'branch-item';
+      const descNode = document.createElement('div');
+      descNode.className = 'branch-node';
+      descNode.innerHTML = `<span class="branch-icon">📄</span><span class="branch-label">Descripción</span><span class="branch-chevron">▶</span>`;
+      const descContent = document.createElement('div');
+      descContent.className = 'branch-content' + (cause.desc ? '' : ' empty');
+      descContent.textContent = cause.desc || 'Sin descripción por ahora.';
+      descNode.addEventListener('click', e => { e.stopPropagation(); toggleBranch(descNode, descContent); });
+      descItem.appendChild(descNode);
+      descItem.appendChild(descContent);
+
+      // — Lógica branch
+      const logicItem = document.createElement('div');
+      logicItem.className = 'branch-item logic';
+      const logicNode = document.createElement('div');
+      logicNode.className = 'branch-node';
+      logicNode.innerHTML = `<span class="branch-icon">⚙️</span><span class="branch-label">Lógica</span><span class="branch-chevron">▶</span>`;
+      const logicContent = document.createElement('div');
+      logicContent.className = 'branch-content' + (cause.logic ? '' : ' empty');
+      logicContent.textContent = cause.logic || 'Sin lógica definida por ahora.';
+      logicNode.addEventListener('click', e => { e.stopPropagation(); toggleBranch(logicNode, logicContent); });
+      logicItem.appendChild(logicNode);
+      logicItem.appendChild(logicContent);
+
+      branchesWrap.appendChild(descItem);
+      branchesWrap.appendChild(logicItem);
+
+      // toggle cause → show branches
+      causeNode.addEventListener('click', () => {
+        const isOpen = branchesWrap.classList.toggle('open');
+        causeNode.classList.toggle('open', isOpen);
+      });
+
+      causeWrap.appendChild(causeNode);
+      causeWrap.appendChild(branchesWrap);
+      causesTree.appendChild(causeWrap);
+    });
+
+    // toggle owner → show causes
+    ownerNode.addEventListener('click', () => {
+      const isOpen = causesTree.classList.toggle('open');
+      ownerNode.classList.toggle('open', isOpen);
+    });
+
+    block.appendChild(ownerNode);
+    block.appendChild(causesTree);
+    diagram.appendChild(block);
+  });
+}
+
+function toggleBranch(node, content) {
+  const isOpen = content.classList.toggle('open');
+  node.classList.toggle('open', isOpen);
+}
+
+build();
+</script>
+</body>
+</html>
