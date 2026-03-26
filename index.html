@@ -46,6 +46,101 @@
       border-radius: 3px; letter-spacing: 1px;
     }
 
+    /* ── TABLEROS GALLERY ── */
+    .boards-page { background: #ebebeb; min-height: calc(100vh - 48px); }
+
+    .boards-hero {
+      background: linear-gradient(135deg, #1a1f71 0%, #0d1147 60%, #12154e 100%);
+      padding: 32px 40px 40px; color: #fff;
+    }
+    .boards-hero-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; color: #ffe600; margin-bottom: 8px; }
+    .boards-hero-title   { font-size: 1.9rem; font-weight: 900; line-height: 1; margin-bottom: 8px; }
+    .boards-hero-title span { color: #ffe600; }
+    .boards-hero-desc    { font-size: 0.82rem; color: #a8b4d8; line-height: 1.6; }
+
+    .boards-section-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 2px;
+      color: #999; text-transform: uppercase;
+      padding: 28px 40px 12px;
+    }
+
+    .boards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      padding: 0 40px 48px;
+    }
+
+    .board-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      cursor: pointer;
+      transition: box-shadow .2s, transform .15s;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .board-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.13); transform: translateY(-2px); }
+
+    .board-card-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .board-card-source {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+      padding: 2px 8px; border-radius: 999px;
+    }
+    .source-tableau { background: #e8f0fe; color: #1a56cc; }
+    .source-looker  { background: #e6f4ea; color: #1a7340; }
+
+    .board-card-title { font-size: 0.95rem; font-weight: 700; color: #1a1f71; }
+    .board-card-desc  { font-size: 0.78rem; color: #666; line-height: 1.45; flex: 1; }
+    .board-card-link  { font-size: 0.75rem; font-weight: 700; color: #3483fa; margin-top: 4px; }
+
+    /* ── EMBED VIEW ── */
+    .embed-view { display: none; flex-direction: column; height: calc(100vh - 48px); }
+    .embed-view.active { display: flex; }
+
+    .embed-topbar {
+      background: #fff; border-bottom: 1px solid #ddd;
+      padding: 0 24px; height: 52px; flex-shrink: 0;
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    .embed-back {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 600; color: #3483fa;
+      cursor: pointer; border: none; background: none; padding: 0;
+      transition: opacity .15s;
+    }
+    .embed-back:hover { opacity: .7; }
+
+    .embed-divider { width: 1px; height: 20px; background: #ddd; }
+    .embed-title { font-size: 0.9rem; font-weight: 700; color: #1a1f71; flex: 1; }
+
+    .embed-open-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; font-weight: 600; color: #fff;
+      background: #3483fa; border: none; border-radius: 5px;
+      padding: 6px 14px; cursor: pointer; text-decoration: none;
+      transition: background .15s;
+    }
+    .embed-open-btn:hover { background: #1a6de0; }
+
+    .embed-frame {
+      flex: 1; border: none; width: 100%; display: block;
+      background: #f5f5f5;
+    }
+
+    .embed-notice {
+      background: #fff8e1; border-bottom: 1px solid #ffe082;
+      padding: 8px 24px; font-size: 0.75rem; color: #7a5800;
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+
     /* ── HERO ── */
     .hero {
       background: linear-gradient(135deg, #1a1f71 0%, #0d1147 60%, #12154e 100%);
@@ -201,6 +296,7 @@
   </div>
   <div class="nav-tab active" onclick="showTab('diagram')">Causas Delay</div>
   <div class="nav-tab" onclick="showTab('docs')">Documentación</div>
+  <div class="nav-tab" onclick="showTab('boards')">Tableros Experience</div>
   <div class="nav-live">LIVE</div>
 </nav>
 
@@ -223,6 +319,36 @@
 <!-- DIAGRAM -->
 <div id="page-diagram">
   <div class="diagram-wrap" id="diagram"></div>
+</div>
+
+<!-- TABLEROS EXPERIENCE -->
+<div id="page-boards" style="display:none;">
+
+  <!-- gallery -->
+  <div class="boards-page" id="boards-gallery">
+    <div class="boards-hero">
+      <div class="boards-hero-eyebrow">INTELLIGENCE — EXPERIENCE</div>
+      <div class="boards-hero-title">Tableros <span>Experience</span></div>
+      <div class="boards-hero-desc">Acceso centralizado a los dashboards operativos del equipo. Selecciona un tablero para visualizarlo.</div>
+    </div>
+    <div class="boards-section-label">Tableros disponibles</div>
+    <div class="boards-grid" id="boardsGrid"></div>
+  </div>
+
+  <!-- embed view -->
+  <div class="embed-view" id="boards-embed">
+    <div class="embed-topbar">
+      <button class="embed-back" onclick="closeEmbed()">← Volver a Tableros</button>
+      <div class="embed-divider"></div>
+      <div class="embed-title" id="embedTitle"></div>
+      <a class="embed-open-btn" id="embedOpenBtn" href="#" target="_blank">Abrir en nueva pestaña ↗</a>
+    </div>
+    <div class="embed-notice" id="embedNotice">
+      ⚠️ Si el tablero muestra una pantalla de login, haz clic en <strong>"Abrir en nueva pestaña"</strong> — es necesario tener sesión activa en Tableau / Looker Studio.
+    </div>
+    <iframe class="embed-frame" id="embedFrame" src="" allowfullscreen></iframe>
+  </div>
+
 </div>
 
 <!-- DOCUMENTACIÓN -->
@@ -505,13 +631,105 @@ function build() {
   });
 }
 
+// ── BOARDS DATA ──
+const BOARDS = [
+  {
+    title: "Generador de Delay",
+    desc: "Tendencias de delay por owner, causa raíz y dimensiones operativas.",
+    source: "tableau",
+    icon: "📊",
+    iconBg: "#e8f0fe",
+    url: "https://us-east-1.online.tableau.com/#/site/melishipping/views/MLMGeneradorDelay_17490657155610/MLMDelayTrends",
+    embedUrl: "https://us-east-1.online.tableau.com/views/MLMGeneradorDelay_17490657155610/MLMDelayTrends?:embed=y&:showVizHome=no&:toolbar=yes"
+  },
+  {
+    title: "Tracking Promise",
+    desc: "Shipments en riesgo de incumplir la promesa de entrega.",
+    source: "tableau",
+    icon: "🚚",
+    iconBg: "#e8f0fe",
+    url: "https://us-east-1.online.tableau.com/#/site/melishipping/views/MLMTRACKINGPROMISE_17490657151190/DelayShipmentsenRiesgo",
+    embedUrl: "https://us-east-1.online.tableau.com/views/MLMTRACKINGPROMISE_17490657151190/DelayShipmentsenRiesgo?:embed=y&:showVizHome=no&:toolbar=yes"
+  },
+  {
+    title: "DIT",
+    desc: "Delay in Transit — seguimiento diario de shipments fuera de tiempo.",
+    source: "looker",
+    icon: "📈",
+    iconBg: "#e6f4ea",
+    url: "https://lookerstudio.google.com/reporting/55e33133-d370-43cc-90c1-96d5e506fe61/page/tEnnC",
+    embedUrl: "https://lookerstudio.google.com/embed/reporting/55e33133-d370-43cc-90c1-96d5e506fe61/page/tEnnC"
+  },
+  {
+    title: "CO Impacts",
+    desc: "Impacto de Custom Offsets en la experiencia de entrega.",
+    source: "tableau",
+    icon: "🎯",
+    iconBg: "#e8f0fe",
+    url: "https://us-east-1.online.tableau.com/#/site/melishipping/views/MLMExperience-CustomOffsets/HTCOImpacts",
+    embedUrl: "https://us-east-1.online.tableau.com/views/MLMExperience-CustomOffsets/HTCOImpacts?:embed=y&:showVizHome=no&:toolbar=yes"
+  },
+  {
+    title: "Monitor Cap-Delay",
+    desc: "Monitoreo de capacidad y delay en tiempo real.",
+    source: "looker",
+    icon: "🔍",
+    iconBg: "#e6f4ea",
+    url: "https://lookerstudio.google.com/reporting/5c4c1550-c6b5-45c7-a029-fba2075adaff/page/p_5k1j1tz80d",
+    embedUrl: "https://lookerstudio.google.com/embed/reporting/5c4c1550-c6b5-45c7-a029-fba2075adaff/page/p_5k1j1tz80d"
+  },
+];
+
+function buildBoards() {
+  const grid = document.getElementById('boardsGrid');
+  BOARDS.forEach((b, i) => {
+    const card = document.createElement('div');
+    card.className = 'board-card';
+    const sourceCls  = b.source === 'tableau' ? 'source-tableau' : 'source-looker';
+    const sourceText = b.source === 'tableau' ? 'Tableau' : 'Looker Studio';
+    card.innerHTML = `
+      <div class="board-card-icon" style="background:${b.iconBg}">${b.icon}</div>
+      <span class="board-card-source ${sourceCls}">${sourceText}</span>
+      <div class="board-card-title">${b.title}</div>
+      <div class="board-card-desc">${b.desc}</div>
+      <div class="board-card-link">ABRIR TABLERO →</div>
+    `;
+    card.addEventListener('click', () => openEmbed(i));
+    grid.appendChild(card);
+  });
+}
+
+function openEmbed(i) {
+  const b = BOARDS[i];
+  document.getElementById('embedTitle').textContent  = b.title;
+  document.getElementById('embedOpenBtn').href       = b.url;
+  document.getElementById('embedFrame').src          = b.embedUrl;
+  // show notice only for tableau (needs auth)
+  document.getElementById('embedNotice').style.display = b.source === 'tableau' ? '' : 'none';
+  document.getElementById('boards-gallery').style.display = 'none';
+  document.getElementById('boards-embed').classList.add('active');
+}
+
+function closeEmbed() {
+  document.getElementById('embedFrame').src = '';
+  document.getElementById('boards-embed').classList.remove('active');
+  document.getElementById('boards-gallery').style.display = '';
+}
+
 function showTab(tab) {
   document.getElementById('page-diagram').style.display = tab === 'diagram' ? '' : 'none';
   document.getElementById('page-docs').style.display    = tab === 'docs'    ? '' : 'none';
+  document.getElementById('page-boards').style.display  = tab === 'boards'  ? '' : 'none';
   document.querySelectorAll('.nav-tab').forEach((t, i) => {
-    t.classList.toggle('active', (tab === 'diagram' && i === 0) || (tab === 'docs' && i === 1));
+    t.classList.toggle('active',
+      (tab === 'diagram' && i === 0) ||
+      (tab === 'docs'    && i === 1) ||
+      (tab === 'boards'  && i === 2)
+    );
   });
 }
+
+buildBoards();
 
 function toggleBranch(node, content) {
   const isOpen = content.classList.toggle('open');
