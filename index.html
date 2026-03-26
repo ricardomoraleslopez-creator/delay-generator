@@ -382,6 +382,12 @@ const OWNERS = [
     ]
   },
   {
+    id: "RTG", name: "RTG", color: "#0f766e",
+    causes: [
+      { label: "NO RUTEADO", desc: "No se pudo rutear en el día/ciclo que se intentó rutear (ruteo fuera de horario establecido en el plan. Es Blanco).", logic: "INDUCCION_TARDE_SVC = 'NO' AND DESPACHOTARDE_SVC = 'Si' AND IS_RUTEADO_EN_1INDUCCION <> 1" },
+    ]
+  },
+  {
     id: "XPT", name: "XPT", color: "#64748b",
     causes: [
       { label: "LATE DISPATCH", desc: "", logic: "" },
