@@ -300,24 +300,22 @@
   <div class="nav-live">LIVE</div>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">INTELLIGENCE — EXPERIENCE</div>
-  <div class="hero-title">Delay <span>Generator</span></div>
-  <div class="hero-desc">
-    Diagrama de causas raíz que generan delays en los envíos, organizado por owner operativo.
-  </div>
-  <div class="hero-hint">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffe600" stroke-width="2.5">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
-      <line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
-    Clic en <strong>Owner</strong> para ver causas · Clic en una <strong>Causa</strong> para desplegar <em>Descripción</em> y <em>Lógica</em>
-  </div>
-</div>
-
 <!-- DIAGRAM -->
 <div id="page-diagram">
+  <div class="hero">
+    <div class="hero-eyebrow">INTELLIGENCE — EXPERIENCE</div>
+    <div class="hero-title">Delay <span>Generator</span></div>
+    <div class="hero-desc">
+      Diagrama de causas raíz que generan delays en los envíos, organizado por owner operativo.
+    </div>
+    <div class="hero-hint">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffe600" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      Clic en <strong>Owner</strong> para ver causas · Clic en una <strong>Causa</strong> para desplegar <em>Descripción</em> y <em>Lógica</em>
+    </div>
+  </div>
   <div class="diagram-wrap" id="diagram"></div>
 </div>
 
@@ -694,7 +692,7 @@ function buildBoards() {
       <div class="board-card-desc">${b.desc}</div>
       <div class="board-card-link">ABRIR TABLERO →</div>
     `;
-    card.addEventListener('click', () => openEmbed(i));
+    card.addEventListener('click', () => window.open(b.url, '_blank'));
     grid.appendChild(card);
   });
 }
