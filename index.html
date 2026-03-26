@@ -34,9 +34,12 @@
     }
     .nav-tab {
       padding: 0 18px; height: 48px; display: flex; align-items: center;
-      font-size: 0.82rem; font-weight: 600; color: #3483fa;
-      border-bottom: 3px solid #3483fa;
+      font-size: 0.82rem; font-weight: 600; color: #999;
+      border-bottom: 3px solid transparent;
+      cursor: pointer; user-select: none; transition: color .15s;
     }
+    .nav-tab:hover { color: #3483fa; }
+    .nav-tab.active { color: #3483fa; border-bottom-color: #3483fa; }
     .nav-live {
       margin-left: auto; background: #00a650; color: #fff;
       font-size: 0.65rem; font-weight: 700; padding: 3px 8px;
@@ -196,7 +199,8 @@
       <div class="logo-sub">INTELLIGENCE — EXPERIENCE</div>
     </div>
   </div>
-  <div class="nav-tab">Causas Delay</div>
+  <div class="nav-tab active" onclick="showTab('diagram')">Causas Delay</div>
+  <div class="nav-tab" onclick="showTab('docs')">Documentación</div>
   <div class="nav-live">LIVE</div>
 </nav>
 
@@ -217,7 +221,24 @@
 </div>
 
 <!-- DIAGRAM -->
-<div class="diagram-wrap" id="diagram"></div>
+<div id="page-diagram">
+  <div class="diagram-wrap" id="diagram"></div>
+</div>
+
+<!-- DOCUMENTACIÓN -->
+<div id="page-docs" style="display:none;">
+  <div style="background:#fff; border-bottom:1px solid #ddd; padding:14px 40px;">
+    <div style="font-size:0.7rem;font-weight:700;letter-spacing:2px;color:#999;text-transform:uppercase;margin-bottom:4px;">Documentación</div>
+    <div style="font-size:1rem;font-weight:700;color:#1a1f71;">Delay Generator — Presentación</div>
+  </div>
+  <div style="padding:0; background:#f0f0f0; min-height:calc(100vh - 100px);">
+    <iframe
+      src="https://docs.google.com/presentation/d/1SBzzUwtwmZNRgiFalib7z17NUTkwdV7CUyMXzrqYQj0/embed?start=false&loop=false&delayms=3000"
+      style="width:100%; height:calc(100vh - 100px); border:none; display:block;"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
 
 <script>
 // =====================================================================
@@ -481,6 +502,14 @@ function build() {
     block.appendChild(ownerNode);
     block.appendChild(causesTree);
     diagram.appendChild(block);
+  });
+}
+
+function showTab(tab) {
+  document.getElementById('page-diagram').style.display = tab === 'diagram' ? '' : 'none';
+  document.getElementById('page-docs').style.display    = tab === 'docs'    ? '' : 'none';
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    t.classList.toggle('active', (tab === 'diagram' && i === 0) || (tab === 'docs' && i === 1));
   });
 }
 
