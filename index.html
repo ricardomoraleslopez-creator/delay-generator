@@ -46,6 +46,57 @@
       border-radius: 3px; letter-spacing: 1px;
     }
 
+    /* ── SEARCH BAR ── */
+    .search-bar {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 14px 32px;
+      background: #fff;
+      border-bottom: 1px solid #e4e8f0;
+      position: sticky; top: 48px; z-index: 10;
+    }
+
+    .search-input {
+      flex: 1; min-width: 180px;
+      height: 36px; padding: 0 12px 0 34px;
+      border: 1px solid #dde3f0; border-radius: 6px;
+      font-size: 0.82rem; color: #333;
+      background: #f8f9ff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 10px center;
+      outline: none; transition: border-color .15s;
+    }
+    .search-input:focus { border-color: #3483fa; background-color: #fff; }
+    .search-input::placeholder { color: #aaa; }
+
+    .owner-select {
+      height: 36px; padding: 0 30px 0 10px;
+      border: 1px solid #dde3f0; border-radius: 6px;
+      font-size: 0.82rem; color: #333;
+      background: #f8f9ff; outline: none;
+      cursor: pointer; transition: border-color .15s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+    .owner-select:focus { border-color: #3483fa; }
+
+    .search-clear {
+      height: 36px; padding: 0 14px;
+      border: 1px solid #dde3f0; border-radius: 6px;
+      font-size: 0.78rem; color: #666;
+      background: #f8f9ff; cursor: pointer;
+      transition: all .15s; white-space: nowrap;
+    }
+    .search-clear:hover { border-color: #3483fa; color: #3483fa; background: #f0f4ff; }
+
+    .search-results {
+      font-size: 0.75rem; color: #999; white-space: nowrap;
+    }
+
+    .no-results {
+      text-align: center; padding: 48px 24px;
+      color: #aaa; font-size: 0.85rem;
+    }
+
     /* ── TABLEROS GALLERY ── */
     .boards-page { background: #ebebeb; min-height: calc(100vh - 48px); }
 
@@ -316,7 +367,16 @@
       Clic en <strong>Owner</strong> para ver causas · Clic en una <strong>Causa</strong> para desplegar <em>Descripción</em> y <em>Lógica</em>
     </div>
   </div>
+  <div class="search-bar">
+    <select class="owner-select" id="ownerSelect" onchange="filterCauses()">
+      <option value="">Todos los owners</option>
+    </select>
+    <input class="search-input" id="searchInput" type="text" placeholder="Buscar causa raíz..." oninput="filterCauses()"/>
+    <span class="search-results" id="searchResults"></span>
+    <button class="search-clear" onclick="clearFilters()">Limpiar filtros</button>
+  </div>
   <div class="diagram-wrap" id="diagram"></div>
+  <div class="no-results" id="noResults" style="display:none;">No se encontraron causas para tu búsqueda.</div>
 </div>
 
 <!-- TABLEROS EXPERIENCE -->
@@ -728,6 +788,78 @@ function showTab(tab) {
 }
 
 buildBoards();
+
+// ── SEARCH / FILTER ──
+function buildOwnerSelect() {
+  const sel = document.getElementById('ownerSelect');
+  OWNERS.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o.id;
+    opt.textContent = `${o.id} — ${o.name}`;
+    sel.appendChild(opt);
+  });
+}
+
+function filterCauses() {
+  const ownerVal = document.getElementById('ownerSelect').value.toLowerCase();
+  const textVal  = document.getElementById('searchInput').value.toLowerCase().trim();
+  const blocks   = document.querySelectorAll('.owner-block');
+  let totalVisible = 0;
+
+  blocks.forEach(block => {
+    const ownerName = block.querySelector('.owner-name').textContent;
+    const ownerId   = block.querySelector('.owner-avatar').textContent;
+    const ownerMatch = !ownerVal || ownerId.toLowerCase() === ownerVal;
+
+    if (!ownerMatch) { block.style.display = 'none'; return; }
+
+    const causeWraps = block.querySelectorAll('.cause-wrap');
+    let visibleCauses = 0;
+
+    causeWraps.forEach(wrap => {
+      const label = wrap.querySelector('.cause-label').textContent.toLowerCase();
+      const show  = !textVal || label.includes(textVal);
+      wrap.style.display = show ? '' : 'none';
+      if (show) visibleCauses++;
+    });
+
+    // show block only if it has visible causes
+    if (visibleCauses > 0) {
+      block.style.display = '';
+      // auto-open tree when filtering
+      if (textVal || ownerVal) {
+        block.querySelector('.causes-tree').classList.add('open');
+        block.querySelector('.owner-node').classList.add('open');
+      }
+      totalVisible += visibleCauses;
+    } else {
+      block.style.display = 'none';
+    }
+  });
+
+  // update counter
+  const res = document.getElementById('searchResults');
+  res.textContent = (ownerVal || textVal) ? `${totalVisible} causa${totalVisible !== 1 ? 's' : ''} encontrada${totalVisible !== 1 ? 's' : ''}` : '';
+
+  // no results message
+  document.getElementById('noResults').style.display = totalVisible === 0 && (ownerVal || textVal) ? '' : 'none';
+}
+
+function clearFilters() {
+  document.getElementById('ownerSelect').value = '';
+  document.getElementById('searchInput').value = '';
+  // close all trees and reset display
+  document.querySelectorAll('.owner-block').forEach(b => {
+    b.style.display = '';
+    b.querySelector('.causes-tree').classList.remove('open');
+    b.querySelector('.owner-node').classList.remove('open');
+    b.querySelectorAll('.cause-wrap').forEach(w => w.style.display = '');
+  });
+  document.getElementById('searchResults').textContent = '';
+  document.getElementById('noResults').style.display = 'none';
+}
+
+buildOwnerSelect();
 
 function toggleBranch(node, content) {
   const isOpen = content.classList.toggle('open');
