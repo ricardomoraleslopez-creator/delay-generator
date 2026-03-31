@@ -332,6 +332,80 @@
     }
     .branch-item.logic .branch-node:hover { background: #fef0dc; }
     .branch-item.logic .branch-label { color: #7a4400; }
+
+    /* ── TARGETS 2026 ── */
+    .targets-page { background: #ebebeb; min-height: calc(100vh - 48px); }
+    .targets-hero {
+      background: linear-gradient(135deg, #1a1f71 0%, #0d1147 60%, #12154e 100%);
+      padding: 32px 40px 40px; color: #fff;
+    }
+    .targets-hero-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; color: #ffe600; margin-bottom: 8px; }
+    .targets-hero-title   { font-size: 1.9rem; font-weight: 900; line-height: 1; margin-bottom: 8px; }
+    .targets-hero-title span { color: #ffe600; }
+    .targets-hero-desc    { font-size: 0.82rem; color: #a8b4d8; line-height: 1.6; }
+    .targets-subnav { background: #fff; border-bottom: 1px solid #ddd; display: flex; padding: 0 32px; }
+    .targets-subtab {
+      padding: 0 18px; height: 44px; display: flex; align-items: center;
+      font-size: 0.82rem; font-weight: 600; color: #999;
+      border-bottom: 3px solid transparent; cursor: pointer; user-select: none; transition: color .15s;
+    }
+    .targets-subtab:hover { color: #3483fa; }
+    .targets-subtab.active { color: #3483fa; border-bottom-color: #3483fa; }
+    .targets-section { display: none; padding: 28px 32px 56px; }
+    .targets-section.active { display: block; }
+    .t-summary-row { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .t-card { background: #fff; border-radius: 8px; padding: 18px 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); flex: 1; min-width: 160px; }
+    .t-card-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 1.5px; color: #999; text-transform: uppercase; margin-bottom: 6px; }
+    .t-card-val   { font-size: 1.7rem; font-weight: 900; color: #1a1f71; }
+    .t-card-sub   { font-size: 0.7rem; color: #aaa; margin-top: 3px; }
+    .t-card.delay  .t-card-val { color: #e11d48; }
+    .t-card.ontime .t-card-val { color: #00a650; }
+    .t-card.early  .t-card-val { color: #3483fa; }
+    .t-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+    .t-select {
+      height: 36px; padding: 0 32px 0 12px; border: 1px solid #dde3f0; border-radius: 6px;
+      font-size: 0.82rem; color: #333; background: #f8f9ff; outline: none; cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .t-select:focus { border-color: #3483fa; }
+    .t-search {
+      flex: 1; min-width: 200px; max-width: 340px; height: 36px; padding: 0 12px 0 34px;
+      border: 1px solid #dde3f0; border-radius: 6px; font-size: 0.82rem; color: #333;
+      background: #f8f9ff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 10px center;
+      outline: none;
+    }
+    .t-search:focus { border-color: #3483fa; background-color: #fff; }
+    .t-section-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; color: #999; text-transform: uppercase; margin-bottom: 12px; }
+    .t-table-wrap { overflow-x: auto; margin-bottom: 28px; }
+    .t-table {
+      width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08); font-size: 0.78rem;
+    }
+    .t-table th {
+      background: #1a1f71; color: #fff; padding: 10px 14px; text-align: right;
+      font-weight: 700; font-size: 0.72rem; letter-spacing: .5px; white-space: nowrap;
+    }
+    .t-table th:first-child { text-align: left; }
+    .t-table td { padding: 9px 14px; text-align: right; border-bottom: 1px solid #f0f2f8; color: #333; }
+    .t-table td:first-child { text-align: left; font-weight: 600; color: #1a1f71; }
+    .t-table tr:last-child td { border-bottom: none; }
+    .t-table tr:hover td { background: #f8f9ff; }
+    .t-table tr.delay-row td { background: #fff0f3; font-weight: 700; color: #c0143a; }
+    .t-table tr.target-row td { background: #f0f4ff; font-weight: 700; color: #1a1f71; }
+    .t-pos { color: #00a650 !important; font-weight: 700; }
+    .t-neg { color: #e11d48 !important; font-weight: 700; }
+    .t-no-result {
+      text-align: center; padding: 48px 24px; color: #aaa; font-size: 0.85rem;
+      background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    .t-svc-header {
+      background: #fff; border-radius: 8px; padding: 14px 20px; margin-bottom: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .t-svc-code { font-size: 1.3rem; font-weight: 900; color: #1a1f71; }
+    .t-svc-delay-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; color: #999; text-transform: uppercase; }
+    .t-svc-delay-val { font-size: 1rem; font-weight: 900; color: #e11d48; }
   </style>
 </head>
 <body>
@@ -348,6 +422,7 @@
   <div class="nav-tab active" onclick="showTab('diagram')">Causas Delay</div>
   <div class="nav-tab" onclick="showTab('docs')">Documentación</div>
   <div class="nav-tab" onclick="showTab('boards')">Tableros Experience</div>
+  <div class="nav-tab" onclick="showTab('targets')">Targets 2026</div>
   <div class="nav-live">LIVE</div>
 </nav>
 
@@ -421,6 +496,51 @@
       style="width:100%; height:calc(100vh - 100px); border:none; display:block;"
       allowfullscreen>
     </iframe>
+  </div>
+</div>
+
+<!-- TARGETS 2026 -->
+<div id="page-targets" style="display:none;">
+  <div class="targets-page">
+    <div class="targets-hero">
+      <div class="targets-hero-eyebrow">INTELLIGENCE — EXPERIENCE</div>
+      <div class="targets-hero-title">Targets <span>2026</span></div>
+      <div class="targets-hero-desc">Objetivos de delay para 2026 por región, Service Center y Cross Dock.</div>
+    </div>
+    <div class="targets-subnav">
+      <div class="targets-subtab active" onclick="showSubTab('generales')">Targets Generales</div>
+      <div class="targets-subtab" onclick="showSubTab('svc')">Targets by SVC</div>
+      <div class="targets-subtab" onclick="showSubTab('xd')">Targets by XD</div>
+    </div>
+    <!-- GENERALES -->
+    <div class="targets-section active" id="t-generales">
+      <div class="t-controls">
+        <select class="t-select" id="regionSelect" onchange="renderGenerales()">
+          <option value="MLM">MLM</option>
+          <option value="Centro">Centro</option>
+          <option value="Metro">Metro</option>
+          <option value="Norte">Norte</option>
+          <option value="Sur">Sur</option>
+        </select>
+      </div>
+      <div class="t-summary-row" id="t-gen-cards"></div>
+      <div class="t-section-title">Breakdown por Owner</div>
+      <div class="t-table-wrap"><table class="t-table" id="t-gen-table"></table></div>
+    </div>
+    <!-- SVC -->
+    <div class="targets-section" id="t-svc">
+      <div class="t-controls">
+        <input class="t-search" type="text" id="svcSearch" placeholder="Buscar SVC (ej. SAG1, SMX2...)" oninput="renderSVC()"/>
+      </div>
+      <div id="t-svc-content"></div>
+    </div>
+    <!-- XD -->
+    <div class="targets-section" id="t-xd">
+      <div class="t-controls">
+        <input class="t-search" type="text" id="xdSearch" placeholder="Buscar XD (ej. MXXAG1...)" oninput="renderXD()"/>
+      </div>
+      <div class="t-table-wrap"><table class="t-table" id="t-xd-table"></table></div>
+    </div>
   </div>
 </div>
 
@@ -778,11 +898,13 @@ function showTab(tab) {
   document.getElementById('page-diagram').style.display = tab === 'diagram' ? '' : 'none';
   document.getElementById('page-docs').style.display    = tab === 'docs'    ? '' : 'none';
   document.getElementById('page-boards').style.display  = tab === 'boards'  ? '' : 'none';
+  document.getElementById('page-targets').style.display = tab === 'targets' ? '' : 'none';
   document.querySelectorAll('.nav-tab').forEach((t, i) => {
     t.classList.toggle('active',
       (tab === 'diagram' && i === 0) ||
       (tab === 'docs'    && i === 1) ||
-      (tab === 'boards'  && i === 2)
+      (tab === 'boards'  && i === 2) ||
+      (tab === 'targets' && i === 3)
     );
   });
 }
@@ -868,5 +990,7 @@ function toggleBranch(node, content) {
 
 build();
 </script>
+<script src="targets-data.js"></script>
+<script src="targets-render.js"></script>
 </body>
 </html>
