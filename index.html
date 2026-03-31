@@ -899,6 +899,7 @@ function showTab(tab) {
   document.getElementById('page-docs').style.display    = tab === 'docs'    ? '' : 'none';
   document.getElementById('page-boards').style.display  = tab === 'boards'  ? '' : 'none';
   document.getElementById('page-targets').style.display = tab === 'targets' ? '' : 'none';
+  if (tab === 'targets') { renderGenerales(); renderXD(); }
   document.querySelectorAll('.nav-tab').forEach((t, i) => {
     t.classList.toggle('active',
       (tab === 'diagram' && i === 0) ||

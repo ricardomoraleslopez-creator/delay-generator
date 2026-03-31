@@ -114,5 +114,6 @@ function renderXD() {
     `<thead><tr><th>XD</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>2026 Target</th></tr></thead><tbody>${rows}</tbody>`;
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() { renderGenerales(); renderXD(); });
+// Initialize
+renderGenerales();
+renderXD();
